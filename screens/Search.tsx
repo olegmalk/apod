@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 import DatePicker from '@react-native-community/datetimepicker';
 import ApodCard from '../components/APodCard';
@@ -33,9 +33,11 @@ export default function Search() {
 
 
     return (
-        <View>
-            <DatePicker value={startDate} mode="date" display="default" onChange={(event, selectedDate) => setStartDate(selectedDate || startDate)} />
-            <DatePicker value={endDate} mode="date" display="default" onChange={(event, selectedDate) => setEndDate(selectedDate || endDate)} />
+        <View style={styles.container}>
+            <View style={styles.calendarContainer}>
+                <DatePicker value={startDate} mode="date" display="default" onChange={(event, selectedDate) => setStartDate(selectedDate || startDate)} />
+                <DatePicker value={endDate} mode="date" display="default" onChange={(event, selectedDate) => setEndDate(selectedDate || endDate)} />
+            </View>
             <FlatList
                 data={apods}
                 keyExtractor={(item) => item.date}
@@ -44,3 +46,16 @@ export default function Search() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: '#fff',
+    },
+    calendarContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+});
