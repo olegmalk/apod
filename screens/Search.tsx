@@ -3,16 +3,8 @@ import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import DatePicker from '@react-native-community/datetimepicker';
 import ApodCard from '../components/card';
-
-const API_KEY = 'msyz6brJcv0J6QLnTn0MiVYM37pNcLM4H2jM0ZJy';
-
-type Apod = {
-    date: string;
-    title: string;
-    explanation: string;
-    url: string;
-    hdurl: string;
-}
+import { Apod } from '../types/apod';
+import { makeUrl } from '../utils/makeUrl';
 
 const Shimmer = () => {
     return (
@@ -38,10 +30,12 @@ export default function Search() {
 
     const fetchApods = async () => {
         setLoading(true);
-        const startDateParam = `&start_date=${startDate.toISOString().split('T')[0]}`;
-        const endDateParam = `&end_date=${endDate.toISOString().split('T')[0]}`;
-        const { data } = await axios.get<Apod[]>(`https://api.nasa.gov/planetary/apod?api_key=${API_KEY}${startDateParam}${endDateParam}`);
-        console.log('asdasd', data);
+        const url = makeUrl({
+            start_date: startDate.toISOString().split('T')[0],
+            end_date : endDate.toISOString().split('T')[0]
+        });
+        const { data } = await axios.get<Apod[]>(url);
+
         setApods(data);
         setLoading(false);
     };
