@@ -4,7 +4,7 @@ import { getRandomDate } from '../utils/getRandomDate';
 import { Apod } from '../types/apod';
 import { makeUrl } from '../utils/makeUrl';
 
-export default function useAPOD() {
+export default function useAPOD(date: string) {
     const [data, setData] = useState<Apod | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -12,9 +12,8 @@ export default function useAPOD() {
 
     useEffect(() => {
         const fetchAPOD = async () => {
-            const date = getRandomDate();
             try {
-                const response = await axios.get(makeUrl({ date: date.toISOString().slice(0, 10) }));
+                const response = await axios.get(makeUrl({ date }));
                 setData(response.data);
                 setLoading(false);
             } catch (error) {
