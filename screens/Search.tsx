@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import DatePicker from '@react-native-community/datetimepicker';
-import ApodCard from '../components/APodCard';
+import ApodCard, { ApodCardProps } from '../components/APodCard';
 
 const API_KEY = 'msyz6brJcv0J6QLnTn0MiVYM37pNcLM4H2jM0ZJy';
 
@@ -13,6 +13,18 @@ type Apod = {
     url: string;
     hdurl: string;
 }
+
+const Shimmer = () => {
+    return (
+        <View style={styles.shimmerContainer}>
+            <View style={styles.shimmer} />
+            <View style={styles.shimmer} />
+            <View style={styles.shimmer} />
+            <View style={styles.shimmer} />
+            <View style={styles.shimmer} />
+        </View>
+    );
+};
 
 export default function Search() {
     const [apods, setApods] = useState<Apod[]>([]);
@@ -34,6 +46,24 @@ export default function Search() {
         setLoading(false);
     };
 
+    const renderShimmer = () => {
+        return (
+            <Shimmer />
+        );
+    };
+
+    const renderApodCard = ({ item }: { item: Apod }) => {
+        return (
+            <ApodCard
+                date={item.date}
+                title={item.title}
+                explanation={item.explanation}
+                url={item.url}
+                hdurl={item.hdurl}
+                isFavorite={false}
+            />
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -42,12 +72,12 @@ export default function Search() {
                 <DatePicker value={endDate} mode="date" display="default" onChange={(event, selectedDate) => setEndDate(selectedDate || endDate)} />
             </View>
             {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                renderShimmer()
             ) : (
                 <FlatList
                     data={apods}
                     keyExtractor={(item) => item.date}
-                    renderItem={({ item }) => <ApodCard date={item.date} title={item.title} explanation={item.explanation} url={item.url} hdurl={item.hdurl} isFavorite={false} />}
+                    renderItem={renderApodCard}
                 />
             )}
         </View>
@@ -64,5 +94,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 10,
+    },
+    shimmerContainer: {
+        padding: 10,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    shimmer: {
+        marginBottom: 10,
+        height: 200,
+        borderRadius: 10,
+        backgroundColor: '#e1e1e1',
     },
 });
