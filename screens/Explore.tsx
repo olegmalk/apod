@@ -46,14 +46,15 @@ export default function Explore() {
             </View>
         );
 
-    const renderSuccess = (apod: Apod) => (<>
-        <Image source={{ uri: apod.url }} style={styles.image} />
-                <Text style={styles.title}>{apod.title}</Text>
-                <Text style={styles.description}>{apod.explanation}</Text>
-                <TouchableOpacity onPress={handleSwipeRight}>
-                    <Text style={styles.favoritesButton}>Add to favorites</Text>
-                </TouchableOpacity>
-        </>)
+    const renderSuccess = (apod: Apod) => (
+        <>
+            <Image source={{ uri: apod.url }} style={styles.image} resizeMode="cover" />
+            <View style={styles.overlay}>
+                <Text style={styles.title} numberOfLines={2}>{apod.title}</Text>
+                <Text style={styles.description} numberOfLines={10}>{apod.explanation}</Text>
+            </View>
+        </>
+    )
 
     const renderError = () => (<View style={styles.container}>
             <Text>Error loading data</Text>
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 10,
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -116,17 +117,32 @@ const styles = StyleSheet.create({
     },
     image: {
         width: '100%',
-        height: '60%',
+        height: '100%',
         borderRadius: 10,
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        borderRadius: 10,
+        padding: 10,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginTop: 10,
+        color: 'white',
+        textAlign: 'center',
+        marginBottom: 10,
     },
     description: {
         fontSize: 16,
-        marginTop: 10,
+        color: 'white',
+        textAlign: 'center',
     },
     retryButton: {
         color: 'blue',
@@ -136,7 +152,7 @@ const styles = StyleSheet.create({
     favoritesButton: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: 'blue',
+        color: 'white',
         textDecorationLine: 'underline',
         marginTop: 10,
     },
