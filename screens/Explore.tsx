@@ -11,7 +11,6 @@ export default function Explore() {
     const [date, setDate] = useState(generateRandomDateString());
     const { data: currentAPOD, loading, error, triggerRetry } = useAPOD(date);
     const panX = useRef(new Animated.Value(0)).current;
-
     function handleSwipeLeft() {
         setDate(generateRandomDateString())
     }
@@ -27,6 +26,11 @@ export default function Explore() {
         }).start();
     }, [currentAPOD]);
 
+    const rotateInterpolate = panX.interpolate({
+        inputRange: [-200, 0, 200],
+        outputRange: ['-30deg', '0deg', '30deg'],
+        extrapolate: 'clamp',
+    });
 
     if (loading) {
         return (
@@ -73,7 +77,7 @@ export default function Explore() {
                     }
                 }}
             >
-                <Animated.View style={[styles.card, { transform: [{ translateX: panX }] }]}>
+                <Animated.View style={[styles.card, { transform: [{ translateX: panX }, { rotate: rotateInterpolate }] }]}>
                     {currentAPOD ? renderSuccess(currentAPOD) : renderError()}
                 </Animated.View>
             </PanGestureHandler>
