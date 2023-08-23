@@ -13,6 +13,7 @@ export default function useAPOD(date: string) {
     useEffect(() => {
         const fetchAPOD = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get(makeUrl({ date }));
                 setData(response.data);
                 setLoading(false);
@@ -31,7 +32,7 @@ export default function useAPOD(date: string) {
         } else {
             fetchAPOD();
         }
-    }, [retry]);
+    }, [retry, date]);
 
     const triggerRetry = () => {
         setRetry(true);

@@ -11,11 +11,19 @@ export default function Explore() {
     const [date, setDate] = useState(generateRandomDateString());
     const { data: currentAPOD, loading, error, triggerRetry } = useAPOD(date);
     const panX = useRef(new Animated.Value(0)).current;
+    
+    const reload = () => {
+        if (!loading) {
+            setDate(generateRandomDateString())
+        }
+    }
+    
     function handleSwipeLeft() {
-        setDate(generateRandomDateString())
+        reload();
     }
 
     function handleSwipeRight() {
+        reload();
         console.log('to favorites');
     }
 
@@ -32,13 +40,11 @@ export default function Explore() {
         extrapolate: 'clamp',
     });
 
-    if (loading) {
-        return (
+    const renderLoading = () => (
             <View style={styles.container}>
                 <Text>Loading...</Text>
             </View>
         );
-    }
 
     const renderSuccess = (apod: Apod) => (<>
         <Image source={{ uri: apod.url }} style={styles.image} />
@@ -69,16 +75,16 @@ export default function Explore() {
                         handleSwipeRight();
                     } else if (nativeEvent.translationX < -100) {
                         handleSwipeLeft();
-                    } else {
-                        Animated.spring(panX, {
-                            toValue: 0,
-                            useNativeDriver: true,
-                        }).start();
                     }
+
+                    Animated.spring(panX, {
+                        toValue: 0,
+                        useNativeDriver: true,
+                    }).start();
                 }}
             >
                 <Animated.View style={[styles.card, { transform: [{ translateX: panX }, { rotate: rotateInterpolate }] }]}>
-                    {currentAPOD ? renderSuccess(currentAPOD) : renderError()}
+                    {loading ? renderLoading() :currentAPOD ? renderSuccess(currentAPOD) : renderError()}
                 </Animated.View>
             </PanGestureHandler>
         </GestureHandlerRootView>
