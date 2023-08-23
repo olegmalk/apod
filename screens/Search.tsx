@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import DatePicker from '@react-native-community/datetimepicker';
-import ApodCard, { ApodCardProps } from '../components/APodCard';
+import ApodCard from '../components/card';
 
 const API_KEY = 'msyz6brJcv0J6QLnTn0MiVYM37pNcLM4H2jM0ZJy';
 
