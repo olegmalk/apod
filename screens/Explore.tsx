@@ -5,26 +5,20 @@ import useAPOD from '../hooks/useAPOD';
 import { Apod } from '../types/apod';
 import { getRandomDate } from '../utils/getRandomDate';
 
+const SWIPE_OFFSET = 25;
+
 const generateRandomDateString = () => getRandomDate().toISOString().slice(0, 10);
 
 export default function Explore() {
     const [date, setDate] = useState(generateRandomDateString());
     const { data: currentAPOD, loading, error, triggerRetry } = useAPOD(date);
     const panX = useRef(new Animated.Value(0)).current;
+    const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | 'none'>('none');
     
     const reload = () => {
         if (!loading) {
             setDate(generateRandomDateString())
         }
-    }
-    
-    function handleSwipeLeft() {
-        reload();
-    }
-
-    function handleSwipeRight() {
-        reload();
-        console.log('to favorites');
     }
 
     useEffect(() => {
@@ -70,18 +64,27 @@ export default function Explore() {
             <PanGestureHandler
                 onGestureEvent={({ nativeEvent }) => {
                     panX.setValue(nativeEvent.translationX);
+                    if (nativeEvent.translationX > SWIPE_OFFSET) {
+                        setSwipeDirection('right');
+                    } else if (nativeEvent.translationX < -SWIPE_OFFSET) {
+                        setSwipeDirection('left');
+                    } else {
+                        setSwipeDirection('none');
+                    }
                 }}
                 onHandlerStateChange={({ nativeEvent }) => {
-                    if (nativeEvent.translationX > 100) {
-                        handleSwipeRight();
-                    } else if (nativeEvent.translationX < -100) {
-                        handleSwipeLeft();
+                    if (swipeDirection === 'right') {
+                        reload();
+                        // add to favorites
+                    } else if (swipeDirection === 'left') {
+                        reload();
                     }
 
                     Animated.spring(panX, {
                         toValue: 0,
                         useNativeDriver: true,
                     }).start();
+                    setSwipeDirection('none');
                 }}
             >
                 <Animated.View style={[styles.card, { transform: [{ translateX: panX }, { rotate: rotateInterpolate }] }]}>
