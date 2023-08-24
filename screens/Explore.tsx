@@ -46,6 +46,11 @@ export default function Explore() {
             <View style={styles.overlay}>
                 <Text style={styles.title} numberOfLines={2}>{apod.title}</Text>
                 <Text style={styles.description} numberOfLines={10}>{apod.explanation}</Text>
+                {swipeDirection === 'left' ? (
+                    <Text style={[styles.label, styles.nextLabel]}>NEXT</Text>
+                ) : swipeDirection === 'right' ? (
+                    <Text style={[styles.label, styles.favoritesLabel]}>TO FAVORITES</Text>
+                ) : null}
             </View>
         </>
     )
@@ -158,5 +163,28 @@ const styles = StyleSheet.create({
         color: 'white',
         textDecorationLine: 'underline',
         marginTop: 10,
+    },
+    label: {
+        position: 'absolute',
+        top: '15%',
+        left: '50%',
+        width: 200,
+        height: 40,
+        transform: [{ translateX: -100 }, { translateY: -20 }],
+        textAlign: 'center',
+    },
+    nextLabel: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'center',
+        marginBottom: 10,
+    },
+    favoritesLabel: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'white',
+        textAlign: 'center',
+        marginBottom: 10,
     },
 });
