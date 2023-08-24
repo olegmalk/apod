@@ -1,25 +1,22 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Apod } from '../types/apod';
 
 export interface ApodCardProps {
-  date: string;
-  title: string;
-  explanation: string;
-  url: string;
-  hdurl: string;
+  apod: Apod;
   isFavorite: boolean;
   onHeartPress: () => void;
 }
 
-export default function ApodCard({ date, title, explanation, url, hdurl, isFavorite, onHeartPress }: ApodCardProps) {
+export default function ApodCard({ apod, isFavorite, onHeartPress }: ApodCardProps) {
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: url }} style={styles.image} resizeMode="cover" />
+        <Image source={{ uri: apod.url }} style={styles.image} resizeMode="cover" />
         <View style={styles.textOverlay}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.date}>{date}</Text>
+          <Text style={styles.title}>{apod.title}</Text>
+          <Text style={styles.date}>{apod.date}</Text>
         </View>
         <TouchableOpacity style={styles.favoriteIconContainer} onPress={onHeartPress}>
           <Ionicons name="heart" size={24} color={isFavorite ? 'red' : 'white'} />

@@ -25,7 +25,7 @@ export default function Search() {
     const [startDate, setStartDate] = useState<Date>(START_DATE);
     const [endDate, setEndDate] = useState<Date>(END_DATE);
     const [loading, setLoading] = useState<boolean>(false);
-    const {favorites, removeFavorite, addFavorite} = useFavorites();
+    const {favorites, removeFavorite, addFavorite, hasFavorite} = useFavorites();
 
     useEffect(() => {
         fetchApods();
@@ -49,20 +49,16 @@ export default function Search() {
         );
     };
 
-    const renderApodCard = ({ item }: { item: Apod }) => {
+    const renderApodCard = ({item}: {item: Apod}) => {
         return (
             <ApodCard
-                date={item.date}
-                title={item.title}
-                explanation={item.explanation}
-                url={item.url}
-                hdurl={item.hdurl}
-                isFavorite={favorites.includes(item.date)}
+                apod={item}
+                isFavorite={hasFavorite(item.date)}
                 onHeartPress={() => {
-                    if (favorites.includes(item.date)) {
+                    if (hasFavorite(item.date)) {
                         removeFavorite(item.date);
                     } else {
-                        addFavorite(item.date);
+                        addFavorite(item);
                     }
                 }}
             />

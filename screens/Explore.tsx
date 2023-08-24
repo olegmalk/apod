@@ -82,7 +82,7 @@ export default function Explore() {
                 onHandlerStateChange={({ nativeEvent }) => {
                     if (swipeDirection === 'right') {
                         reload();
-                        addFavorite(date);
+                        currentAPOD && addFavorite(currentAPOD);
                     } else if (swipeDirection === 'left') {
                         reload();
                     }
