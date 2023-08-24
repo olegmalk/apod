@@ -17,6 +17,8 @@ const FavoritesContext = createContext<FavoritesContextType>({
 export const FavoritesProvider: React.FC<{ children: ReactNode }>  = ({ children }) => {
     const [favorites, setFavorites] = useState<string[]>([]);
 
+    console.log('favorites', favorites)
+
     useEffect(() => {
         const loadFavorites = async () => {
             try {
@@ -50,6 +52,7 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }>  = ({ children
     const removeFavorite = (date: string) => {
         setFavorites((prevFavorites) => prevFavorites.filter((favorite) => favorite !== date));
     };
+
 
     return (
         <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite }}>

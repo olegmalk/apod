@@ -4,6 +4,7 @@ import { PanGestureHandler, GestureHandlerRootView } from 'react-native-gesture-
 import useAPOD from '../hooks/useAPOD';
 import { Apod } from '../types/apod';
 import { getRandomDate } from '../utils/getRandomDate';
+import { useFavorites } from '../context/favorites';
 
 const SWIPE_OFFSET = 25;
 
@@ -14,7 +15,8 @@ export default function Explore() {
     const { data: currentAPOD, loading, error, triggerRetry } = useAPOD(date);
     const panX = useRef(new Animated.Value(0)).current;
     const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | 'none'>('none');
-    
+    const {favorites, addFavorite} = useFavorites()
+
     const reload = () => {
         if (!loading) {
             setDate(generateRandomDateString())
@@ -80,7 +82,7 @@ export default function Explore() {
                 onHandlerStateChange={({ nativeEvent }) => {
                     if (swipeDirection === 'right') {
                         reload();
-                        // add to favorites
+                        addFavorite(date);
                     } else if (swipeDirection === 'left') {
                         reload();
                     }

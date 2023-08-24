@@ -5,6 +5,8 @@ import DatePicker from '@react-native-community/datetimepicker';
 import ApodCard from '../components/card';
 import { Apod } from '../types/apod';
 import { makeUrl } from '../utils/makeUrl';
+import { END_DATE, START_DATE } from '../constants/date';
+import { useFavorites } from '../context/favorites';
 
 const Shimmer = () => {
     return (
@@ -20,9 +22,10 @@ const Shimmer = () => {
 
 export default function Search() {
     const [apods, setApods] = useState<Apod[]>([]);
-    const [startDate, setStartDate] = useState<Date>(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
-    const [endDate, setEndDate] = useState<Date>(new Date());
+    const [startDate, setStartDate] = useState<Date>(START_DATE);
+    const [endDate, setEndDate] = useState<Date>(END_DATE);
     const [loading, setLoading] = useState<boolean>(false);
+    const {favorites, removeFavorite, addFavorite} = useFavorites();
 
     useEffect(() => {
         fetchApods();
@@ -54,7 +57,14 @@ export default function Search() {
                 explanation={item.explanation}
                 url={item.url}
                 hdurl={item.hdurl}
-                isFavorite={false}
+                isFavorite={favorites.includes(item.date)}
+                onHeartPress={() => {
+                    if (favorites.includes(item.date)) {
+                        removeFavorite(item.date);
+                    } else {
+                        addFavorite(item.date);
+                    }
+                }}
             />
         );
     };
