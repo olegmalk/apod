@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, FlatList, StyleSheet, Button, Platform } from 'react-native';
 import axios from 'axios';
 import DatePicker from '@react-native-community/datetimepicker';
 import ApodCard from '../components/card';
@@ -25,7 +25,9 @@ export default function Search() {
     const [startDate, setStartDate] = useState<Date>(START_DATE);
     const [endDate, setEndDate] = useState<Date>(END_DATE);
     const [loading, setLoading] = useState<boolean>(false);
-    const {favorites, removeFavorite, addFavorite, hasFavorite} = useFavorites();
+    const [showStartDatePicker, setShowStartDatePicker] = useState(Platform.OS === 'ios');
+    const [showEndDatePicker, setShowEndDatePicker] = useState(Platform.OS === 'ios');
+    const {removeFavorite, addFavorite, hasFavorite} = useFavorites();
 
     useEffect(() => {
         fetchApods();
@@ -44,32 +46,41 @@ export default function Search() {
     };
 
     const renderShimmer = () => {
-        return (
-            <Shimmer />
-        );
-    };
-
-    const renderApodCard = ({item}: {item: Apod}) => {
-        return (
-            <ApodCard
-                apod={item}
-                isFavorite={hasFavorite(item.date)}
-                onHeartPress={() => {
-                    if (hasFavorite(item.date)) {
-                        removeFavorite(item.date);
-                    } else {
-                        addFavorite(item);
-                    }
-                }}
-            />
-        );
+        return <Shimmer />;
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.calendarContainer}>
-                <DatePicker value={startDate} mode="date" display="default" onChange={(event, selectedDate) => setStartDate(selectedDate || startDate)} />
-                <DatePicker value={endDate} mode="date" display="default" onChange={(event, selectedDate) => setEndDate(selectedDate || endDate)} />
+                {Platform.OS === 'android' && <Button title={startDate.toISOString().split('T')[0]} onPress={() => setShowStartDatePicker(true)} />}
+                {(showStartDatePicker || Platform.OS === 'ios') && (
+                    <DatePicker
+                        value={startDate}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                            if (Platform.OS === 'android') {
+                                setShowStartDatePicker(false);
+                            }
+                            setStartDate(selectedDate || startDate);
+                        }}
+                    />
+                )}
+                
+                {Platform.OS === 'android' && <Button title={endDate.toISOString().split('T')[0]} onPress={() => setShowEndDatePicker(true)} />}
+                {(showEndDatePicker || Platform.OS === 'ios') && (
+                    <DatePicker
+                        value={endDate}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                            if (Platform.OS === 'android') {
+                                setShowEndDatePicker(false);
+                            }
+                            setEndDate(selectedDate || endDate);
+                        }}
+                    />
+                )}
             </View>
             {loading ? (
                 renderShimmer()
@@ -77,7 +88,19 @@ export default function Search() {
                 <FlatList
                     data={apods}
                     keyExtractor={(item) => item.date}
-                    renderItem={renderApodCard}
+                    renderItem={({item}) => (
+                        <ApodCard
+                            apod={item}
+                            isFavorite={hasFavorite(item.date)}
+                            onHeartPress={() => {
+                                if (hasFavorite(item.date)) {
+                                    removeFavorite(item.date);
+                                } else {
+                                    addFavorite(item);
+                                }
+                            }}
+                        />
+                    )}
                 />
             )}
         </View>
@@ -108,3 +131,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#e1e1e1',
     },
 });
+
